@@ -2,87 +2,171 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Home Loan EMI Calculator India – Interest & Amortization</title>
+<title>Home Loan EMI Calculator India</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Home Loan EMI Calculator India with interest breakup, amortization schedule, pie chart and yearly interest bar chart.">
+<meta name="description" content="Home Loan EMI Calculator India with EMI breakup, interest calculation, amortization schedule and charts.">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  padding: 20px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #e9f0ff, #f7f9fc);
+  margin: 0;
 }
+
+/* NAVBAR */
+nav {
+  background: #ffffff;
+  padding: 15px 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+nav a {
+  margin-right: 18px;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 600;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* MAIN CONTAINER */
 .container {
-  max-width: 1000px;
-  background: #fff;
-  padding: 20px;
-  margin: auto;
+  max-width: 1100px;
+  background: #ffffff;
+  padding: 30px;
+  margin: 30px auto;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+p {
+  text-align: center;
+  color: #555;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-top: 25px;
+}
+
+input {
+  padding: 12px;
   border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
 }
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
+
 button {
-  background: #007bff;
-  color: white;
+  grid-column: 1 / -1;
+  padding: 14px;
+  border-radius: 10px;
   border: none;
+  background: linear-gradient(135deg, #007bff, #0056d2);
+  color: #fff;
+  font-size: 16px;
   cursor: pointer;
 }
-.result {
-  margin-top: 10px;
-  font-weight: bold;
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-top: 25px;
 }
+
+.result-box {
+  background: #f8faff;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+
 .chart-wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 20px;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
 }
+
 canvas {
-  max-width: 450px;
+  max-width: 420px;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 25px;
+  font-size: 13px;
 }
+
 th, td {
   border: 1px solid #ddd;
-  padding: 6px;
-  font-size: 13px;
+  padding: 8px;
   text-align: right;
 }
+
 th {
   background: #007bff;
   color: white;
+}
+
+footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+footer a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 8px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- NAVIGATION -->
+<nav>
+  <a href="index.html">Home</a>
+  <a href="home-loan-emi.html">Home Loan</a>
+  <a href="bike-loan-emi.html">Bike Loan</a>
+  <a href="personal-loan-emi.html">Personal Loan</a>
+  <a href="sip-calculator.html">SIP Calculator</a>
+</nav>
+
 <div class="container">
 
 <h1>Home Loan EMI Calculator (India)</h1>
+<p>Calculate your home loan EMI, interest payable, and full repayment schedule.</p>
 
-<p>
-Use this Home Loan EMI Calculator to calculate your monthly home loan EMI,
-total interest payable, and view a complete amortization schedule with charts.
-</p>
+<div class="form-grid">
+  <input type="number" id="amount" placeholder="Home Loan Amount (₹)">
+  <input type="number" id="rate" placeholder="Interest Rate (%)">
+  <input type="number" id="tenure" placeholder="Tenure (Years)">
+  <button onclick="calculateEMI()">Calculate EMI</button>
+</div>
 
-<input type="number" id="amount" placeholder="Home Loan Amount (₹)">
-<input type="number" id="rate" placeholder="Interest Rate (%)">
-<input type="number" id="tenure" placeholder="Loan Tenure (Years)">
-
-<button onclick="calculateEMI()">Calculate Home Loan EMI</button>
-
-<div class="result" id="emi"></div>
-<div class="result" id="interest"></div>
-<div class="result" id="total"></div>
+<div class="results">
+  <div class="result-box" id="emi">Monthly EMI: —</div>
+  <div class="result-box" id="interest">Total Interest: —</div>
+  <div class="result-box" id="total">Total Payment: —</div>
+</div>
 
 <div class="chart-wrapper">
   <canvas id="pieChart"></canvas>
@@ -103,55 +187,10 @@ total interest payable, and view a complete amortization schedule with charts.
 <tbody id="schedule"></tbody>
 </table>
 
-<!-- SEO CONTENT -->
-
-<h2>What is Home Loan EMI?</h2>
-<p>
-Home Loan EMI (Equated Monthly Installment) is the fixed monthly payment made by
-a borrower to repay a home loan. It consists of both interest and principal components.
-</p>
-
-<h2>Home Loan EMI Formula</h2>
-<p>
-<strong>EMI = P × R × (1 + R)<sup>N</sup> / [(1 + R)<sup>N</sup> – 1]</strong>
-</p>
-<ul>
-<li><strong>P</strong> = Home Loan Amount</li>
-<li><strong>R</strong> = Monthly Interest Rate</li>
-<li><strong>N</strong> = Number of Monthly Installments</li>
-</ul>
-
-<h2>Example of Home Loan EMI Calculation</h2>
-<p>
-If you take a home loan of ₹50,00,000 at an interest rate of 8.5% per annum for
-20 years, your monthly EMI will be approximately ₹43,391.
-</p>
-
-<h2>Factors Affecting Home Loan EMI</h2>
-<ul>
-<li>Loan amount</li>
-<li>Interest rate</li>
-<li>Loan tenure</li>
-<li>Type of interest rate (fixed or floating)</li>
-</ul>
-
-<h2>Understanding Home Loan Amortization</h2>
-<p>
-In a home loan, the interest portion is higher in the initial years. As the loan progresses,
-the principal repayment increases, reducing the outstanding balance gradually.
-</p>
-
-<h2>FAQs</h2>
-
-<h3>Is home loan EMI fixed?</h3>
-<p>
-For fixed-rate loans, EMI remains the same. For floating-rate loans, EMI may change.
-</p>
-
-<h3>Can prepayment reduce home loan interest?</h3>
-<p>
-Yes, prepaying your home loan reduces the outstanding principal and total interest payable.
-</p>
+<footer>
+  <a href="privacy-policy.html">Privacy Policy</a> |
+  <a href="contact.html">Contact Us</a>
+</footer>
 
 </div>
 
@@ -165,7 +204,7 @@ function calculateEMI() {
   let N = years * 12;
 
   if (!P || !R || !N) {
-    alert("Enter all values");
+    alert("Please enter all values");
     return;
   }
 
@@ -196,7 +235,6 @@ function calculateEMI() {
   }
 
   schedule.innerHTML = table;
-
   emi.innerHTML = "Monthly EMI: ₹" + EMI.toFixed(2);
   interest.innerHTML = "Total Interest: ₹" + totalInterest.toFixed(2);
   total.innerHTML = "Total Payment: ₹" + (P + totalInterest).toFixed(2);
@@ -221,23 +259,15 @@ function drawPie(principal, interest) {
 
 function drawBar(data) {
   if (barChart) barChart.destroy();
-
-  let labels = data.map((_, i) => "Year " + (i + 1));
-
   barChart = new Chart(document.getElementById("barChart"), {
     type: "bar",
     data: {
-      labels: labels,
+      labels: data.map((_, i) => "Year " + (i + 1)),
       datasets: [{
         label: "Interest Paid (₹)",
         data: data,
         backgroundColor: "#007bff"
       }]
-    },
-    options: {
-      scales: {
-        y: { beginAtZero: true }
-      }
     }
   });
 }
