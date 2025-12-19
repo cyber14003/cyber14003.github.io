@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Loan EMI Calculator India – EMI, Interest & Amortization</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Loan EMI Calculator India with EMI breakup, interest calculation, amortization schedule, pie chart and yearly interest chart.">
+<meta name="description" content="Loan EMI Calculator India with EMI breakup, interest calculation, amortization schedule, charts and SIP calculator.">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -12,15 +12,34 @@
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   background: linear-gradient(135deg, #e9f0ff, #f7f9fc);
-  padding: 20px;
   margin: 0;
 }
 
+/* NAVBAR */
+nav {
+  background: #ffffff;
+  padding: 15px 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+nav a {
+  margin-right: 18px;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 600;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* MAIN CONTAINER */
 .container {
   max-width: 1100px;
   background: #ffffff;
   padding: 30px;
-  margin: auto;
+  margin: 30px auto;
   border-radius: 14px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
@@ -28,19 +47,18 @@ body {
 h1 {
   text-align: center;
   color: #2c3e50;
-  margin-bottom: 10px;
 }
 
 p {
   text-align: center;
   color: #555;
-  margin-bottom: 30px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 15px;
+  margin-top: 25px;
 }
 
 input {
@@ -59,12 +77,6 @@ button {
   color: #fff;
   font-size: 16px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,123,255,0.35);
 }
 
 .results {
@@ -79,9 +91,7 @@ button:hover {
   border-radius: 10px;
   padding: 15px;
   text-align: center;
-  box-shadow: inset 0 0 0 1px #e3e9ff;
   font-weight: 600;
-  color: #2c3e50;
 }
 
 .chart-wrapper {
@@ -96,15 +106,10 @@ canvas {
   max-width: 420px;
 }
 
-h2 {
-  margin-top: 40px;
-  color: #2c3e50;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 25px;
   font-size: 13px;
 }
 
@@ -119,10 +124,6 @@ th {
   color: white;
 }
 
-tr:nth-child(even) {
-  background: #f9f9f9;
-}
-
 footer {
   margin-top: 40px;
   text-align: center;
@@ -135,25 +136,24 @@ footer a {
   text-decoration: none;
   margin: 0 8px;
 }
-
-footer a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 600px) {
-  canvas {
-    max-width: 100%;
-  }
-}
 </style>
 </head>
 
 <body>
 
+<!-- NAVIGATION BAR -->
+<nav>
+  <a href="index.html">Home</a>
+  <a href="home-loan-emi.html">Home Loan</a>
+  <a href="bike-loan-emi.html">Bike Loan</a>
+  <a href="personal-loan-emi.html">Personal Loan</a>
+  <a href="sip-calculator.html">SIP Calculator</a>
+</nav>
+
 <div class="container">
 
 <h1>Loan EMI Calculator (India)</h1>
-<p>Calculate your monthly EMI, interest payable, and view complete loan breakup instantly.</p>
+<p>Calculate EMI, interest payable, and full loan breakup instantly.</p>
 
 <div class="form-grid">
   <input type="number" id="amount" placeholder="Loan Amount (₹)">
@@ -173,7 +173,7 @@ footer a:hover {
   <canvas id="barChart"></canvas>
 </div>
 
-<h2>Loan Amortization Schedule</h2>
+<h2>Amortization Schedule</h2>
 <table>
 <thead>
 <tr>
@@ -186,8 +186,6 @@ footer a:hover {
 </thead>
 <tbody id="schedule"></tbody>
 </table>
-
-<hr style="margin-top:40px">
 
 <footer>
   <a href="privacy-policy.html">Privacy Policy</a> |
@@ -247,7 +245,7 @@ function calculateEMI() {
 
 function drawPie(principal, interest) {
   if (pieChart) pieChart.destroy();
-  pieChart = new Chart(pieChartCanvas(), {
+  pieChart = new Chart(document.getElementById("pieChart"), {
     type: "pie",
     data: {
       labels: ["Principal", "Interest"],
@@ -261,7 +259,7 @@ function drawPie(principal, interest) {
 
 function drawBar(data) {
   if (barChart) barChart.destroy();
-  barChart = new Chart(barChartCanvas(), {
+  barChart = new Chart(document.getElementById("barChart"), {
     type: "bar",
     data: {
       labels: data.map((_, i) => "Year " + (i + 1)),
@@ -272,13 +270,6 @@ function drawBar(data) {
       }]
     }
   });
-}
-
-function pieChartCanvas() {
-  return document.getElementById("pieChart");
-}
-function barChartCanvas() {
-  return document.getElementById("barChart");
 }
 </script>
 
