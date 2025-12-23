@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>SIP Calculator India – Mutual Fund Investment Returns</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="SIP Calculator India to calculate mutual fund returns, total investment, gains and visualize investment growth.">
+<meta name="description" content="SIP Calculator India with sliders to estimate mutual fund returns, total investment and maturity value.">
 
 <meta name="robots" content="index, follow">
 <meta name="author" content="Smart Calculator">
@@ -53,7 +53,6 @@ nav a:hover { text-decoration: underline; }
 h1 {
   text-align: center;
   color: #2c3e50;
-  margin-bottom: 5px;
 }
 
 .subtitle {
@@ -62,22 +61,26 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* INPUT GRID */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 18px;
+/* SLIDERS */
+.slider-group {
+  margin-bottom: 25px;
+}
+.slider-group label {
+  font-weight: 600;
+  color: #333;
+}
+.slider-value {
+  float: right;
+  font-weight: bold;
+}
+input[type=range] {
+  width: 100%;
+  margin-top: 8px;
 }
 
-.form-grid input {
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-}
-
-.form-grid button {
-  grid-column: 1 / -1;
+/* BUTTON */
+button {
+  width: 100%;
   padding: 16px;
   border-radius: 12px;
   border: none;
@@ -86,9 +89,7 @@ h1 {
   font-size: 17px;
   cursor: pointer;
 }
-.form-grid button:hover {
-  opacity: 0.95;
-}
+button:hover { opacity: 0.95; }
 
 /* RESULTS */
 .results {
@@ -97,22 +98,17 @@ h1 {
   gap: 18px;
   margin-top: 30px;
 }
-
 .result-box {
   background: linear-gradient(135deg, #f8faff, #eef3ff);
   border-radius: 14px;
   padding: 22px;
   text-align: center;
   font-weight: 600;
-  color: #2c3e50;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
-
 .result-box span {
   display: block;
   margin-top: 6px;
   font-size: 18px;
-  color: #000;
 }
 
 /* ADS PLACEHOLDER */
@@ -127,7 +123,6 @@ h1 {
   justify-content: center;
   margin-top: 35px;
 }
-
 canvas { max-width: 420px; }
 
 /* FOOTER */
@@ -135,7 +130,6 @@ footer {
   margin-top: 45px;
   text-align: center;
   font-size: 14px;
-  color: #555;
 }
 footer a {
   color: #007bff;
@@ -147,7 +141,6 @@ footer a {
 
 <body>
 
-<!-- NAVBAR (UNCHANGED) -->
 <nav>
   <a href="index.html">Home</a>
   <a href="home-loan-emi.html">Home Loan</a>
@@ -160,35 +153,40 @@ footer a {
 <div class="container">
 
 <h1>SIP Calculator (India)</h1>
-<p class="subtitle">
-Estimate mutual fund SIP returns and visualize your long-term wealth growth.
-</p>
+<p class="subtitle">Plan your SIP investment with interactive sliders and instant results.</p>
 
-<!-- INPUTS -->
-<div class="form-grid">
-  <input type="number" id="monthly" placeholder="Monthly SIP Amount (₹)">
-  <input type="number" id="rate" placeholder="Expected Annual Return (%)">
-  <input type="number" id="years" placeholder="Investment Duration (Years)">
-  <button onclick="calculateSIP()">Calculate SIP Returns</button>
+<!-- SLIDERS -->
+<div class="slider-group">
+  <label>Monthly SIP Amount (₹)
+    <span class="slider-value" id="monthlyVal">₹5000</span>
+  </label>
+  <input type="range" id="monthly" min="500" max="100000" step="500" value="5000">
 </div>
+
+<div class="slider-group">
+  <label>Expected Annual Return (%)
+    <span class="slider-value" id="rateVal">12%</span>
+  </label>
+  <input type="range" id="rate" min="1" max="30" step="0.5" value="12">
+</div>
+
+<div class="slider-group">
+  <label>Investment Duration (Years)
+    <span class="slider-value" id="yearsVal">10 Years</span>
+  </label>
+  <input type="range" id="years" min="1" max="40" step="1" value="10">
+</div>
+
+<button onclick="calculateSIP()">Calculate SIP Returns</button>
 
 <!-- RESULTS -->
 <div class="results">
-  <div class="result-box">
-    Total Investment
-    <span id="invested">—</span>
-  </div>
-  <div class="result-box">
-    Estimated Returns
-    <span id="returns">—</span>
-  </div>
-  <div class="result-box">
-    Maturity Amount
-    <span id="total">—</span>
-  </div>
+  <div class="result-box">Total Investment<span id="invested">—</span></div>
+  <div class="result-box">Estimated Returns<span id="returns">—</span></div>
+  <div class="result-box">Maturity Amount<span id="total">—</span></div>
 </div>
 
-<!-- AdSense Placeholder (UNCHANGED) -->
+<!-- AdSense Placeholder -->
 <div class="ad-box">
   <!-- Google AdSense Ad will appear here -->
 </div>
@@ -208,26 +206,30 @@ Estimate mutual fund SIP returns and visualize your long-term wealth growth.
 <script>
 let sipChart;
 
-function calculateSIP() {
-  const P = parseFloat(document.getElementById("monthly").value);
-  const annualRate = parseFloat(document.getElementById("rate").value);
-  const years = parseInt(document.getElementById("years").value);
+// LIVE SLIDER VALUES
+monthly.oninput = () => monthlyVal.innerText = "₹" + monthly.value;
+rate.oninput = () => rateVal.innerText = rate.value + "%";
+years.oninput = () => yearsVal.innerText = years.value + " Years";
 
-  if (!P || !annualRate || !years) {
-    alert("Please enter all values");
-    return;
-  }
+function calculateSIP() {
+  const P = parseFloat(monthly.value);
+  const annualRate = parseFloat(rate.value);
+  const yearsCount = parseInt(years.value);
 
   const r = annualRate / 12 / 100;
-  const n = years * 12;
+  const n = yearsCount * 12;
 
   const maturity = P * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
   const invested = P * n;
   const gain = maturity - invested;
 
-  document.getElementById("invested").innerText = "₹" + invested.toFixed(2);
-  document.getElementById("returns").innerText = "₹" + gain.toFixed(2);
-  document.getElementById("total").innerText = "₹" + maturity.toFixed(2);
+  investedEl = document.getElementById("invested");
+  returnsEl = document.getElementById("returns");
+  totalEl = document.getElementById("total");
+
+  investedEl.innerText = "₹" + invested.toFixed(2);
+  returnsEl.innerText = "₹" + gain.toFixed(2);
+  totalEl.innerText = "₹" + maturity.toFixed(2);
 
   drawChart(invested, gain);
 }
